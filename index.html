@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>紅包抽獎</title>
+
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background: linear-gradient(#b30000, #660000);
+      color: white;
+    }
+
+    h2 {
+      margin-top: 50px;
+    }
+
+    .envelope {
+      width: 220px;
+      height: 280px;
+      background: linear-gradient(145deg, #ff2e2e, #cc0000);
+      margin: 80px auto;
+      border-radius: 16px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      transition: transform 0.3s;
+    }
+
+    .envelope:hover {
+      transform: scale(1.05);
+    }
+
+    .flap {
+      position: absolute;
+      width: 100%;
+      height: 55%;
+      background: linear-gradient(#ff4d4d, #990000);
+      top: 0;
+      left: 0;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      transform-origin: top;
+      transition: transform 0.6s;
+    }
+
+    .open .flap {
+      transform: rotateX(180deg);
+    }
+
+    .seal {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: gold;
+      border-radius: 50%;
+      color: #b30000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 22px;
+      box-shadow: 0 0 10px gold;
+    }
+
+    .result {
+      margin-top: 30px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .hint {
+      margin-top: -40px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🧧 點紅包抽優惠 🧧</h2>
+
+<div id="envelope" class="envelope" onclick="openEnvelope()">
+  <div class="flap"></div>
+  <div class="seal">開</div>
+</div>
+
+<div class="result" id="result"></div>
+
+<script>
+  const prizes = [
+    { name: "8折", weight: 50 },
+    { name: "7折", weight: 40 },
+    { name: "65折", weight: 10 },
+    { name: "5折", weight: 0 }
+  ];
+
+  function openEnvelope() {
+    const el = document.getElementById("envelope");
+
+    // ✅ 防止重複抽
+    if (localStorage.getItem("drawn")) {
+      alert("你已經抽過囉！");
+      return;
+    }
+
+    localStorage.setItem("drawn", "yes");
+
+    // 防止重複點擊動畫
+    if (el.classList.contains("open")) return;
+
+    el.classList.add("open");
+
+    document.getElementById("result").innerText = "開獎中...";
+
+    setTimeout(() => {
+      let total = prizes.reduce((sum, p) => sum + p.weight, 0);
+      let rand = Math.random() * total;
+
+      for (let p of prizes) {
+        if (rand < p.weight) {
+          document.getElementById("result").innerText = "🎉 恭喜抽到：" + p.name;
+          return;
+        }
+        rand -= p.weight;
+      }
+    }, 1200);
+  }
+</script>
+
+</body>
+</html>
